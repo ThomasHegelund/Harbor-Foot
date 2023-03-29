@@ -22,10 +22,12 @@ int pinF = 7;
 int pinG = 8;
 //____________
 // for activating the display segment
-int  D1 = 9;
-int D2 = 10;
-int D3 = 11;
-int D4 = 12;
+const int DISPLAY_ACTIVATION_PIN_1 = 9;
+const int DISPLAY_ACTIVATION_PIN_2 = 10;
+const int DISPLAY_ACTIVATION_PIN_3 = 11;
+const int DISPLAY_ACTIVATION_PIN_4 = 12;
+
+const int DISPLAY_ACTIVATION_PINS[] = {DISPLAY_ACTIVATION_PIN_1, DISPLAY_ACTIVATION_PIN_2, DISPLAY_ACTIVATION_PIN_3, DISPLAY_ACTIVATION_PIN_4};
 
 // the setup routine  runs once when you press reset:
 void setup() {                
@@ -38,10 +40,10 @@ void setup() {
   pinMode(pinE, OUTPUT);     
   pinMode(pinF, OUTPUT);     
   pinMode(pinG,  OUTPUT);   
-  pinMode(D1, OUTPUT);  
-  pinMode(D2, OUTPUT);  
-  pinMode(D3,  OUTPUT);  
-  pinMode(D4, OUTPUT);  
+  pinMode(DISPLAY_ACTIVATION_PIN_1, OUTPUT);  
+  pinMode(DISPLAY_ACTIVATION_PIN_2, OUTPUT);  
+  pinMode(DISPLAY_ACTIVATION_PIN_3,  OUTPUT);  
+  pinMode(DISPLAY_ACTIVATION_PIN_4, OUTPUT);  
 }
 
 // 7 segment numbers
@@ -136,54 +138,61 @@ void nine(){
   digitalWrite(pinG,  HIGH);
 }
 
-//choose display
-void DisOne(){
-  digitalWrite(D1, LOW);
-  digitalWrite(D2, HIGH);
-  digitalWrite(D3, HIGH);
-  digitalWrite(D4, HIGH);
+void switch_display(int display_pin)
+{
+  for (int display_activation_pin : DISPLAY_ACTIVATION_PINS)
+  {
+    digitalWrite(display_activation_pin, HIGH);
+  }
+  digitalWrite(display_pin, LOW);
 }
-void DisTwo(){
-  digitalWrite(D1, HIGH);
-  digitalWrite(D2, LOW);
-  digitalWrite(D3, HIGH);
-  digitalWrite(D4, HIGH);
+
+void write_digit(int digit)
+{
+  switch (digit) {
+    case 0:
+      zero();
+      break;
+    case 1:
+      one();
+      break;
+    case 2:
+      two();
+      break;
+    case 3:
+      three();
+      break;
+    case 4:
+      four();
+      break;
+    case 5:
+      five();
+      break;
+    case 6:
+      six();
+      break;
+    case 7:
+      seven();
+      break;
+    case 8:
+      eight();
+      break;
+    case 9:
+      nine();
+      break;
+  }
 }
-void DisThree(){
-  digitalWrite(D1, HIGH);
-  digitalWrite(D2, HIGH);
-  digitalWrite(D3, LOW);
-  digitalWrite(D4, HIGH);
-}
-void DisFour(){
-  digitalWrite(D1, HIGH);
-  digitalWrite(D2, HIGH);
-  digitalWrite(D3, HIGH);
-  digitalWrite(D4, LOW);
+
+void write_digit_to_display(int digit, int display_activation_pin)
+{
+  switch_display(display_activation_pin);
+  write_digit(digit); // a "delay" so it displays on all of the displays at once
+  delay(1);
 }
 
 void loop() {
-
-  //diplay one
-  DisOne();
-  eight();
-  delay(1);               // a "delay" so it displays on all of the displays at once
-  
-  //display 2
-  DisTwo();
-  nine();   
-  delay(1);               
-  
-  //display 3
-  DisThree();
-  six();
-  delay(1);               
-
-  //display 4
-  DisFour();
-  seven();     
-  delay(1);               
-
+  write_digit_to_display(8, DISPLAY_ACTIVATION_PIN_1);
+  write_digit_to_display(9, DISPLAY_ACTIVATION_PIN_2);
+  write_digit_to_display(6, DISPLAY_ACTIVATION_PIN_3);
+  write_digit_to_display(7, DISPLAY_ACTIVATION_PIN_4);            
 }
-
-
