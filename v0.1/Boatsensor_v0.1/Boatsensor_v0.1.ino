@@ -59,7 +59,7 @@ void update_leds()
 
 void update_occupation_status(int distance, int min_distance = 5, int max_distance = 150)
 {
-  if (distance_in_range(distance, max_distance, min_distance))
+  if (distance_in_range(distance, min_distance, max_distance))
   {
     SPOT_OCCUPIED = true;
     return;
