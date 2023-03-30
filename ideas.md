@@ -1,0 +1,3 @@
+- [ ] Discuss wifi vs thred
+- [ ] Measure the length of the boat
+- [ ] 3D printed case
