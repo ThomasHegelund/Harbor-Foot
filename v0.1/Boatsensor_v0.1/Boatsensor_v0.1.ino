@@ -34,39 +34,22 @@ void setup() {
 void loop() {
 
   // Check if it is time to make a measurement
-  if ((millis() - last_measure_time) > measure_interval) {
+  if (is_time_to_make_measurement()) {
 
     // Measure the distance with ultrasonic sensor
-    distance=sr04.Distance();
+    distance = sr04.Distance();
 
     // If an object is detected between 5 and 150 cm away, the spot is occupied
-    if (distance < 150 && distance > 5) {
-      SPOT_OCCUPIED = true;
-    }
-    else {
-      SPOT_OCCUPIED = false;
-    }
+    update_occupation_status(distance, 5, 150);
 
     // If the spot is occupied, turn on the green LED, otherwise turn on red LED
-    if (SPOT_OCCUPIED) {
-      digitalWrite(GREEN_LED_PIN, LOW);
-      digitalWrite(RED_LED_PIN, HIGH);
-    }
-    else {
-      digitalWrite(GREEN_LED_PIN, HIGH);
-      digitalWrite(RED_LED_PIN, LOW);
-    }
+    update_leds();
 
     // Measue light intensity
     light_intensity = analogRead(PHOTORESISTOR_PIN);
 
     // Switch to nightmode if it is dark
-    if (light_intensity < 200) {
-      NIGHT_MODE = true;
-    }
-    else {
-      NIGHT_MODE = false;
-    }
+    update_night_mode(light_intensity)
 
     // Update time of the latest measure
     last_measure_time = millis();
@@ -77,4 +60,50 @@ void loop() {
     Serial.print("Light intensity: ")
     Serial.println(light_intensity);
     }
+}
+
+void update_night_mode(int light_intensity)
+{
+  if (is_dark(light_intensity, 200)) {
+      NIGHT_MODE = true;
+      return;
+    }
+    NIGHT_MODE = false; 
+}
+
+void update_leds()
+{
+  if (SPOT_OCCUPIED == true) {
+      digitalWrite(GREEN_LED_PIN, LOW);
+      digitalWrite(RED_LED_PIN, HIGH);
+      return;
+    }
+    
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    digitalWrite(RED_LED_PIN, LOW);
+}
+
+void update_occupation_status(int distance, int min_distance = 5, int max_distance = 150)
+{
+  if (distance_in_range(distance, max_distance, min_distance))
+  {
+    SPOT_OCCUPIED = true;
+    return;
+  }
+  SPOT_OCCUPIED = false;
+}
+
+bool is_dark(int light_intensity, int threshold = 200)
+{
+  return light_intensity < threshold;
+}
+
+bool distance_in_range(int distance, int min_distance = 5, int max_distance = 150)
+{
+  return distance > min_distance && distance < max_distance;
+}
+
+bool is_time_to_make_measurement()
+{
+  return (millis() - last_measure_time) > measure_interval;
 }
