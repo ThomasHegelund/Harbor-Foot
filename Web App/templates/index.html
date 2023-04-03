@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habor Master UI</title>
+</head>
+<body>
+    <div>
+        Boats to charged:
+        <ul id="uncharged-boats-list">
+            <li>
+                <label for=""> 
+                    <input name="" type="checkbox">
+                    Boat 4
+                </label>
+            </li>
+            <li>
+                <label for=""> 
+                    <input type="checkbox">
+                    Boat 6
+                </label>
+            </li>
+            <li>
+                <label for=""> 
+                    <input type="checkbox">
+                    Boat 8
+                </label>
+            </li>
+            <li>
+                <label for=""> 
+                    <input type="checkbox">
+                    Boat 10
+                </label>
+            </li>
+            <li>
+                <label for=""> 
+                    <input type="checkbox">
+                    Boat 11
+                </label>
+            </li>
+        </ul>
+    </div>
+    <div>
+        Charged boats:
+        <ul id="charged-boats-list">
+            <li>
+                Boat 12
+            </li>
+            <li>Boat 13</li>
+            <li>Boat 14</li>
+            <li>Boat 15</li>
+        </ul>
+    </div>
+    <div>
+        Available berths:
+        <ul>
+            {% for unoccupied_berth in unoccupied_berths %}
+                <li>{{unoccupied_berth.name}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+{% block javascript %}
+    <script type="text/javascript">
+        {% include "index.js" %}
+    </script>
+{% endblock %}
+
+</html>
