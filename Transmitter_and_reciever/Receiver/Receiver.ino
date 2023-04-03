@@ -1,31 +1,49 @@
 /*
-Following code implements a receiver in a Master-slave relationship between
-a transmitter and receiver
-
-Make sure VirtualWire library is installed
-
-Src: https://ardustore.dk/produkt/wireless-transmitter-and-receiver-433mhz-wireless-module
+  Example for receiving
+  
+  https://github.com/sui77/rc-switch/
+  
+  If you want to visualize a telegram copy the raw data and 
+  paste it into http://test.sui.li/oszi/
 */
-#include <VirtualWire.h>
 
-void setup(){
-  vw_set_ptt_inverted(true); // Required for DR3100
-  vw_set_rx_pin(12);
-  vw_setup(4000); // Bits per sec
-  pinMode(13, OUTPUT);
+#include <RCSwitch.h>
+#include <stdio.h>
 
-  vw_rx_start(); // Start the receiver PLL running
+int MY_SPOT = 2;
+int delay_time = 100;
+
+RCSwitch mySwitch = RCSwitch();
+
+void setup() {
+  Serial.begin(74880);
+  mySwitch.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
+  
 }
-void loop(){
-  uint8_t buf[VW_MAX_MESSAGE_LEN];
-  uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
-  if (vw_get_message(buf, &buflen)){ // Non-blocking
-    if(buf[0]=='1'){
-      digitalWrite(13,1);
-    } 
-    if(buf[0]=='0'){
-      digitalWrite(13,0);
+int checkForBoat(){
+  int reading = mySwitch.getReceivedValue();
+  int boat_IDs [] = {1,2,3,4,5,69};
+  for (int i = 0; i < sizeof(boat_IDs); i++){
+    if(boat_IDs[i] == reading){
+      return boat_IDs[i];
     }
   }
- }
+  return 0;  
+}
+
+void loop() {
+  int boat_ID = checkForBoat();
+  
+  if (boat_ID != 0 ){
+    //Add API-connection here
+    Serial.println(boat_ID);
+    delay_time = 2000;
+  }
+  else{
+    Serial.println("No boat found");
+    delay_time = 100;
+  }
+
+  delay(delay_time);
+}

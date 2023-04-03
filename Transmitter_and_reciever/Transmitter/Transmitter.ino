@@ -1,35 +1,34 @@
 /*
-Following code is a transmitter setup for a Master-Slave relationship between
-a transmitter and receiver
-
-Make sure VirtualWire library is installed
-
-Src: https://ardustore.dk/produkt/wireless-transmitter-and-receiver-433mhz-wireless-module
+  Example for different sending methods
+  
+  https://github.com/sui77/rc-switch/
+  
 */
-#include <VirtualWire.h>
 
-char *controller;
+#include <RCSwitch.h>
+int MY_ID = 69;
+RCSwitch mySwitch = RCSwitch();
+
 void setup() {
-  //Pin to read data from
-  pinMode(13,OUTPUT);
-  vw_set_ptt_inverted(true);
-  vw_set_tx_pin(12);
 
-  // speed of data transfer Kbps
-  vw_setup(4000);
+  Serial.begin(9600);
+  
+  // Transmitter is connected to Arduino Pin #10  
+  mySwitch.enableTransmit(10);
+  
+  // Optional set protocol (default is 1, will work for most outlets)
+  // mySwitch.setProtocol(2);
+
+  // Optional set pulse length.
+  // mySwitch.setPulseLength(320);
+  
+  // Optional set number of transmission repetitions.
+  // mySwitch.setRepeatTransmit(15);
+  
 }
 
-void loop(){
- controller = "1";
- vw_send((uint8_t *)controller, strlen(controller));
- vw_wait_tx(); // Wait until the whole message is gone
- 
- digitalWrite(13,1);
- delay(1000);
-
- controller = "0" ;
- vw_send((uint8_t *)controller, strlen(controller));
- vw_wait_tx(); // Wait until the whole message is gone
- digitalWrite(13,0);
- delay(1000);
+void loop() {
+/* Same switch as above, but using decimal code */
+  mySwitch.send(MY_ID, 24);
+  delay(100);
 }
