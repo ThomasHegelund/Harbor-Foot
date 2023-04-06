@@ -1,20 +1,21 @@
 # from __future__ import annotations
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
+from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
 
 from database import Base
 
+
 class Berth(Base):
     __tablename__ = "berths"
-
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    uuid: Mapped[GUID] = mapped_column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE)
     name: Mapped[str]
     occupied: Mapped[bool]
     default_boat_id: Mapped[int] = mapped_column(nullable=True)
 
 class RentedBerth(Berth):
     boat_length: Mapped[float] = mapped_column(nullable=True)
-    is_paid: Mapped[bool] = mapped_column(nullable=True)
+    is_paid: Mapped[bool] = mapped_column(default=False)
 
 class FreeBerth(Berth):
     return_date: Mapped[str] = mapped_column(nullable=True)

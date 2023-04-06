@@ -15,7 +15,7 @@ html{
 
 body {
     background-color: white;
-    font-size: var(--default-font-size);
+    font-size: min(var(--default-font-size), 30px);
 }
 
 
@@ -23,9 +23,9 @@ body button {
     background-color: var(--blue-grotto);
     border: none;
     padding: 15px;
-    border-radius: 2vw;
+    border-radius: min(2vw, 12px);
     color: white;
-    font-size: 3.6vw;
+    font-size: min(3.6vw, 21.6px);
 }
 
 button:hover{
@@ -33,53 +33,44 @@ button:hover{
     cursor: pointer;
 }
 
-#uncharged-berths {
+.berth-table {
     border-collapse: collapse;
-    width: 100%;
+    width: min(100%, 600px);
+    margin: 0 auto;
 }
 
 #uncharged-berths button{
     width: 100%;
 }
 
-#uncharged-berths td{
+.berth-table td{
     border-top: 1px solid var(--line-color);
     border-bottom: 1px solid var(--line-color);
     padding: 15px;
 }
 
-#uncharged-berths-title
-{
+.title{
     max-width: 600px;
     margin: 0 auto;
     text-transform: uppercase;
-    font-size: 7vw;
+    font-size: min(7vw, 50px);
     margin-top: 40px;
 }
 
-#uncharged-berths-description{
+.description {
     max-width: 600px;
     margin: 0 auto;
     margin-bottom: 40px;
 }
 
-@media screen and (min-width: 600px){
-    #uncharged-berths{
-        width: 600px;
-        margin: 0 auto;
-    }
-
-    body{
-        font-size: 30px;
-    }
-
-    body button{
-        font-size: 21.6px;
-        border-radius: 12px;
-    }
-
-    #uncharged-berths-title{
-       font-size: 50px; 
-    }
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
 }
 
+.berth-table td:nth-child(2){
+    text-align: right;
+}

@@ -8,13 +8,13 @@
 </head>
 <body>
     <div>
-        <h1 id="uncharged-berths-title">Berths to charged</h1>
-        <p id="uncharged-berths-description">The berths shown below are occupied and need to be charged.</p>
-        <table id="uncharged-berths">
+        <h1 class="title">Berths to charged</h1>
+        <p class="description">The berths shown below are occupied and need to be charged.</p>
+        <table class="berth-table"id="uncharged-berths">
             {% for unpaid_berth in unpaid_berths %}
             <tr>
                 <td style="width:60%">{{unpaid_berth.name}}</td>
-                <td><button data-berth_id="{{unpaid_berth.id}}">Mark as payed</button></td>
+                <td><button data-berth_uuid="{{unpaid_berth.uuid}}">Mark as payed</button></td>
             </tr>
             {% endfor %}
         </table>
@@ -22,7 +22,7 @@
 </body>
 {% block javascript %}
     <script type="text/javascript">
-        {% include "index.js" %}
+        {% include "index/index.js" %}
     </script>
 {% endblock %}
 

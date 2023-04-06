@@ -8,9 +8,9 @@
 </head>
 <body>
     <div>
-        <h1 id="uncharged-berths-title">Free berths</h1>
-        <p id="uncharged-berths-description">The berths shown below are unoccupied until the date shown next to it.</p>
-        <table id="uncharged-berths">
+        <h1 class="title">Free berths</h1>
+        <p class="description">The berths shown below are unoccupied until the date shown next to it.</p>
+        <table class="berth-table">
             {% for free_berth in free_berths %}
             <tr>
                 <td style="width:60%">{{free_berth.name}}</td>

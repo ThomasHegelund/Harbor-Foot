@@ -6,11 +6,14 @@ from starlette.responses import RedirectResponse
 from starlette.templating import Jinja2Templates
 
 from sqlalchemy.orm import Session
-
+from fastapi_utils.guid_type import GUID
 import models
 from database import engine, Session
 
 from pydantic import BaseModel
+import uuid
+
+from datetime import datetime, timedelta
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -29,11 +32,11 @@ def get_db():
 
 
 class PaymentStatus(BaseModel):
-    berth_id: int
+    berth_uuid: uuid.UUID
     new_berth_payment_status: bool
 
 class ReturnDate(BaseModel):
-    berth_id: int
+    berth_uuid: uuid.UUID 
     return_date: date
 
 
@@ -43,8 +46,7 @@ def home(request: Request, db: Session = Depends(get_db)):
         .filter(models.RentedBerth.is_paid == False)\
         .filter(models.RentedBerth.occupied == True)\
         .all()
-
-    return templates.TemplateResponse("index.html",
+    return templates.TemplateResponse("index/index.html",
                                       {"request": request, "unpaid_berths": unpaid_berths})
 
 @app.get("/overview")
@@ -55,8 +57,19 @@ def overview(request: Request, db: Session = Depends(get_db)):
         .filter(models.FreeBerth.return_date > date.today())\
         .all()
     free_berths.sort(key=lambda x: x.return_date, reverse=True)
-    return templates.TemplateResponse("overview.html",
+
+    return templates.TemplateResponse("overview/index.html",
                                       {"request": request, "free_berths": free_berths})
+
+@app.get("/berth_info/{berth_uuid}")
+def berth_info(request: Request, berth_uuid: uuid.UUID = None,  db: Session = Depends(get_db)):
+    minimum_return_date = datetime.now()
+    minimum_return_date = minimum_return_date.strftime('%Y-%m-%d')
+    berth = db.query(models.FreeBerth)\
+    .filter(models.FreeBerth.uuid == berth_uuid)\
+    .first()
+    return templates.TemplateResponse("berth_info/index.html",
+                                    {"request": request, "berth": berth, "minimum_return_date": minimum_return_date})
 
 
 @app.post("/add")
@@ -69,9 +82,9 @@ def add(request: Request, name: str = Form(...), occupied: bool = Form(False), d
     return RedirectResponse(url=url, status_code=status.HTTP_303_SEE_OTHER)
 
 @app.post("/update_berth_occupation_status")
-def update_berth_occupation_status(request: Request, berth_id: int = Form(...), new_occupation_status: bool = Form(...), db: Session = Depends(get_db)):
+def update_berth_occupation_status(request: Request, berth_uuid: int = Form(...), new_occupation_status: bool = Form(...), db: Session = Depends(get_db)):
     db.query(models.Berth)\
-        .filter(models.Berth.id == berth_id)\
+        .filter(models.Berth.uuid == berth_uuid)\
         .update({'occupied': new_occupation_status})
     db.commit()
 
@@ -85,13 +98,13 @@ def update_boat_in_harbor(request: Request, boat_id: int = Form(...), new_in_har
 @app.post("/update_berth_payment_status")
 def update_boat_in_harbor(payment_status: PaymentStatus, db: Session = Depends(get_db)):
     db.query(models.RentedBerth)\
-        .filter(models.RentedBerth.id == payment_status.berth_id)\
+        .filter(models.RentedBerth.uuid == payment_status.berth_uuid)\
         .update({'is_paid': payment_status.new_berth_payment_status})
     db.commit()
 
 @app.post("/update_berth_return_date")
-def update_boat_in_harbor(return_date: ReturnDate, db: Session = Depends(get_db)):
+def update_berth_return_date(return_date: ReturnDate, db: Session = Depends(get_db)):
     db.query(models.FreeBerth)\
-        .filter(models.FreeBerth.id == return_date.berth_id)\
+        .filter(models.FreeBerth.uuid == return_date.berth_uuid)\
         .update({'return_date': return_date.return_date})
     db.commit()
