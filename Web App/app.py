@@ -10,10 +10,14 @@ from fastapi_utils.guid_type import GUID
 import models
 from database import engine, Session
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 import uuid
 
 from datetime import datetime, timedelta
+import smtplib
+from email.message import EmailMessage
+
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -38,6 +42,24 @@ class PaymentStatus(BaseModel):
 class ReturnDate(BaseModel):
     berth_uuid: uuid.UUID 
     return_date: date
+
+class BoatJson(BaseModel):
+    uuid: uuid.UUID
+    berth_uuid: uuid.UUID
+    captain_id: uuid.UUID
+    in_harbor: Optional[bool]
+
+class CaptainJson(BaseModel):
+    uuid: uuid.UUID
+    name: str
+    email: EmailStr
+
+class BoatInHarbor(BaseModel):
+    boat_uuid: uuid.UUID
+    in_harbor: bool
+
+def convert_json_class_object_to_dict(json_class_object):
+    return dict([*json_class_object])
 
 
 @app.get("/")
@@ -72,14 +94,26 @@ def berth_info(request: Request, berth_uuid: uuid.UUID = None,  db: Session = De
                                     {"request": request, "berth": berth, "minimum_return_date": minimum_return_date})
 
 
-@app.post("/add")
-def add(request: Request, name: str = Form(...), occupied: bool = Form(False), default_boat_id: int | None = Form(None), db: Session = Depends(get_db)):
+@app.post("/add_berth")
+def add_berth(request: Request, name: str = Form(...), occupied: bool = Form(False), default_boat_id: int | None = Form(None), db: Session = Depends(get_db)):
     new_berth = models.Berth(name = name, occupied = occupied, default_boat_id = default_boat_id)
     db.add(new_berth)
     db.commit()
 
-    url = app.url_path_for("home")
-    return RedirectResponse(url=url, status_code=status.HTTP_303_SEE_OTHER)
+    # url = app.url_path_for("home")
+    # return RedirectResponse(url=url, status_code=status.HTTP_303_SEE_OTHER)
+
+@app.post("/add_boat")
+def add_boat(request: Request, boat_json: BoatJson, db: Session = Depends(get_db)):
+    new_boat = models.Boat(**convert_json_class_object_to_dict(boat_json))
+    db.add(new_boat)
+    db.commit()
+
+@app.post("/add_captain")
+def add_captain(request: Request, captain_json: CaptainJson, db: Session = Depends(get_db)):
+    new_captain = models.Captain(**convert_json_class_object_to_dict(captain_json))
+    db.add(new_captain)
+    db.commit()
 
 @app.post("/update_berth_occupation_status")
 def update_berth_occupation_status(request: Request, berth_uuid: int = Form(...), new_occupation_status: bool = Form(...), db: Session = Depends(get_db)):
@@ -89,11 +123,50 @@ def update_berth_occupation_status(request: Request, berth_uuid: int = Form(...)
     db.commit()
 
 @app.post("/update_boat_in_harbor")
-def update_boat_in_harbor(request: Request, boat_id: int = Form(...), new_in_harbor: bool = Form(...), db: Session = Depends(get_db)):
+def update_boat_in_harbor(request: Request, boat_in_harbor: BoatInHarbor, db: Session = Depends(get_db)):
+    print(boat_in_harbor)
+    boats = db.query(models.Boat).filter(models.Boat.uuid == boat_in_harbor.boat_uuid).first()
+    print(boats.uuid)
+
     db.query(models.Boat)\
-        .filter(models.Boat.id == boat_id)\
-        .update({'in_harbor': new_in_harbor})
+        .filter(models.Boat.uuid == boat_in_harbor.boat_uuid)\
+        .update({'in_harbor': boat_in_harbor.in_harbor})
     db.commit()
+
+    if boat_in_harbor.in_harbor == True:
+        return
+
+    boat = db.query(models.Boat)\
+        .filter(models.Boat.uuid == boat_in_harbor.boat_uuid)\
+        .first()
+    
+    
+    captain = db.query(models.Captain)\
+        .filter(models.Captain.uuid == boat.captain_uuid)\
+        .first()
+
+    url = "/".join(str(request.url).split('/')[:3])
+
+    send_reminder_to_update_return_date(captain, boat, url)
+
+def send_reminder_to_update_return_date(captain: models.Captain, boat: models.Boat, url: str):
+    message = EmailMessage()
+    message.set_content(
+        f"""
+        Dear Captain {captain.name}
+        We can see that you have left the harbor. If you plan on staying away for one or multiple nights please update your return date on the link below:
+        {url}/berth_info/{boat.berth_uuid}
+        """
+    )
+    
+    message['Subject'] = f'Boat return date reminder'
+    message['From'] = "info@localhost"
+    message['To'] = captain.email
+    print(message.as_string())
+    s = smtplib.SMTP('localhost')
+    s.send_message("info@localhost", captain.email, message.as_string())
+    s.quit()
+
 
 @app.post("/update_berth_payment_status")
 def update_boat_in_harbor(payment_status: PaymentStatus, db: Session = Depends(get_db)):

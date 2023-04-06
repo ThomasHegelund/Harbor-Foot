@@ -23,15 +23,15 @@ class FreeBerth(Berth):
 class Boat(Base):
     __tablename__ = "boats"
 
-    id = Column(Integer, primary_key=True, index=True)
-    berth_id = Column(Integer)
-    captain_id = Column(Integer)
+    uuid = Column(GUID, default=GUID_DEFAULT_SQLITE, primary_key=True, index=True)
+    berth_uuid = Column(GUID)
+    captain_uuid = Column(GUID)
     in_harbor = Column(Boolean, default=True)
 
 
 class Captain(Base):
     __tablename__ = "captains"
-    id = Column(Integer, primary_key=True, index=True)
+    uuid = Column(GUID, default=GUID_DEFAULT_SQLITE, primary_key=True, index=True)
     name = Column(String)
     email = Column(String)
 
