@@ -1,0 +1,85 @@
+:root {
+    --navy-blue: #13141C;
+    --royal-blue: #0074B7;
+    --blue-grotto: #1e3f63;
+    --line-color: #e1e1e3;
+    --baby-blue: #BFD7ED;
+    --orange-button: #f26500;
+    --default-font-size: 5vw;
+  }
+
+html{
+    font-family: sans-serif;
+    color: var(--navy-blue);
+}
+
+body {
+    background-color: white;
+    font-size: var(--default-font-size);
+}
+
+
+body button {
+    background-color: var(--blue-grotto);
+    border: none;
+    padding: 15px;
+    border-radius: 2vw;
+    color: white;
+    font-size: 3.6vw;
+}
+
+button:hover{
+    background:var(--orange-button);
+    cursor: pointer;
+}
+
+#uncharged-berths {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#uncharged-berths button{
+    width: 100%;
+}
+
+#uncharged-berths td{
+    border-top: 1px solid var(--line-color);
+    border-bottom: 1px solid var(--line-color);
+    padding: 15px;
+}
+
+#uncharged-berths-title
+{
+    max-width: 600px;
+    margin: 0 auto;
+    text-transform: uppercase;
+    font-size: 7vw;
+    margin-top: 40px;
+}
+
+#uncharged-berths-description{
+    max-width: 600px;
+    margin: 0 auto;
+    margin-bottom: 40px;
+}
+
+@media screen and (min-width: 600px){
+    #uncharged-berths{
+        width: 600px;
+        margin: 0 auto;
+    }
+
+    body{
+        font-size: 30px;
+    }
+
+    body button{
+        font-size: 21.6px;
+        border-radius: 12px;
+    }
+
+    #uncharged-berths-title{
+       font-size: 50px; 
+    }
+}
+

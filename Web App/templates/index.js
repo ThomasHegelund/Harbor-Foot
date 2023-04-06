@@ -1,18 +1,46 @@
-const uncharged_boats = document.querySelectorAll('#uncharged-boats-list li');
-const uncharged_boats_list = document.querySelector('#uncharged-boats-list');
-const charged_boats_list = document.querySelector('#charged-boats-list');
-console.log(charged_boats_list)
+const uncharged_boats = document.querySelectorAll('#uncharged-berths tr');
 
-// console.log(uncharged_boats_list)
 uncharged_boats.forEach(boat => {
-    input = boat.querySelector('input');
-    input.addEventListener('change', function(event){
+    input = boat.querySelector('button');
+    if (input == undefined)
+    {
+        return
+    }
+    input.addEventListener('click', function(event){
         event.preventDefault();
-        moved_boat = event.target.parentNode.parentNode;
-        // moved_boat = move_boat.cloneNode(true);
-        // move_boat.del
-        charged_boats_list.append(moved_boat)
+        payed_berth = event.target;
+        post_new_berth_payment_status(payed_berth.dataset.berth_id)
+        payed_berth.parentNode.parentNode.remove();
     });
 });
+
+
+function post_new_berth_payment_status(berth_id)
+{
+    body = create_post_request_json_body(berth_id)
+    create_update_berth_payment_status_post_request(body);
+}
+
+
+function create_post_request_json_body(berth_id)
+{
+    return JSON.stringify(
+        { 
+            "berth_id": parseInt(berth_id),
+            "new_berth_payment_status": true
+        }
+    )
+}
+
+function create_update_berth_payment_status_post_request(body)
+{
+    fetch('/update_berth_payment_status', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: body
+    })
+}
 
 

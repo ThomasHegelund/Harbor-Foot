@@ -8,58 +8,16 @@
 </head>
 <body>
     <div>
-        Boats to charged:
-        <ul id="uncharged-boats-list">
-            <li>
-                <label for=""> 
-                    <input name="" type="checkbox">
-                    Boat 4
-                </label>
-            </li>
-            <li>
-                <label for=""> 
-                    <input type="checkbox">
-                    Boat 6
-                </label>
-            </li>
-            <li>
-                <label for=""> 
-                    <input type="checkbox">
-                    Boat 8
-                </label>
-            </li>
-            <li>
-                <label for=""> 
-                    <input type="checkbox">
-                    Boat 10
-                </label>
-            </li>
-            <li>
-                <label for=""> 
-                    <input type="checkbox">
-                    Boat 11
-                </label>
-            </li>
-        </ul>
-    </div>
-    <div>
-        Charged boats:
-        <ul id="charged-boats-list">
-            <li>
-                Boat 12
-            </li>
-            <li>Boat 13</li>
-            <li>Boat 14</li>
-            <li>Boat 15</li>
-        </ul>
-    </div>
-    <div>
-        Available berths:
-        <ul>
-            {% for unoccupied_berth in unoccupied_berths %}
-                <li>{{unoccupied_berth.name}}</li>
+        <h1 id="uncharged-berths-title">Berths to charged</h1>
+        <p id="uncharged-berths-description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eligendi, quibusdam.</p>
+        <table id="uncharged-berths">
+            {% for unpaid_berth in unpaid_berths %}
+            <tr>
+                <td style="width:60%">{{unpaid_berth.name}}</td>
+                <td><button data-berth_id="{{unpaid_berth.id}}">Mark as payed</button></td>
+            </tr>
             {% endfor %}
-        </ul>
+        </table>
     </div>
 </body>
 {% block javascript %}
@@ -67,5 +25,11 @@
         {% include "index.js" %}
     </script>
 {% endblock %}
+
+
+    <style>
+        {% include "style.css" %}
+    </style>
+
 
 </html>
