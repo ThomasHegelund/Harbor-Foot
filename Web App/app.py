@@ -34,15 +34,13 @@ class PaymentStatus(BaseModel):
 
 @app.get("/")
 def home(request: Request, db: Session = Depends(get_db)):
-    paid_berths = db.query(models.RentedBerth).filter(models.RentedBerth.is_paid == True).all()
-    unpaid_berths = db.query(models.RentedBerth).filter(models.RentedBerth.is_paid == False).all()
-
-    # unoccupied_berths = db.query(models.Berth).filter(models.Berth.occupied == False).all()
-
-    # unpaid_berths = db.query(models.RentedBerth).filter(models.RentedBerth.occupied == False).all()
+    unpaid_berths = db.query(models.RentedBerth)\
+        .filter(models.RentedBerth.is_paid == False)\
+        .filter(models.RentedBerth.occupied == True)\
+        .all()
 
     return templates.TemplateResponse("index.html",
-                                      {"request": request, "paid_berths": paid_berths, "unpaid_berths": unpaid_berths})
+                                      {"request": request, "unpaid_berths": unpaid_berths})
 
 @app.post("/add")
 def add(request: Request, name: str = Form(...), occupied: bool = Form(False), default_boat_id: int | None = Form(None), db: Session = Depends(get_db)):
