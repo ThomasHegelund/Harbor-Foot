@@ -16,6 +16,9 @@ class RentedBerth(Berth):
     boat_length: Mapped[float] = mapped_column(nullable=True)
     is_paid: Mapped[bool] = mapped_column(nullable=True)
 
+class FreeBerth(Berth):
+    return_date: Mapped[str] = mapped_column(nullable=True)
+
 class Boat(Base):
     __tablename__ = "boats"
 

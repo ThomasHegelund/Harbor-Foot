@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free berths</title>
+</head>
+<body>
+    <div>
+        <h1 id="uncharged-berths-title">Free berths</h1>
+        <p id="uncharged-berths-description">The berths shown below are unoccupied until the date shown next to it.</p>
+        <table id="uncharged-berths">
+            {% for free_berth in free_berths %}
+            <tr>
+                <td style="width:60%">{{free_berth.name}}</td>
+                <td style="width:60%">{{free_berth.return_date}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <style>
+        {% include "style.css" %}
+    </style>
+</body>
+</html>

@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import FastAPI, Depends, Request, Form, status
+from datetime import date
 
 from starlette.responses import RedirectResponse
 from starlette.templating import Jinja2Templates
@@ -31,6 +32,10 @@ class PaymentStatus(BaseModel):
     berth_id: int
     new_berth_payment_status: bool
 
+class ReturnDate(BaseModel):
+    berth_id: int
+    return_date: date
+
 
 @app.get("/")
 def home(request: Request, db: Session = Depends(get_db)):
@@ -41,6 +46,18 @@ def home(request: Request, db: Session = Depends(get_db)):
 
     return templates.TemplateResponse("index.html",
                                       {"request": request, "unpaid_berths": unpaid_berths})
+
+@app.get("/overview")
+def overview(request: Request, db: Session = Depends(get_db)):
+    free_berths = db.query(models.FreeBerth)\
+        .filter(models.FreeBerth.occupied == False)\
+        .filter(models.FreeBerth.return_date != None)\
+        .filter(models.FreeBerth.return_date > date.today())\
+        .all()
+    free_berths.sort(key=lambda x: x.return_date, reverse=True)
+    return templates.TemplateResponse("overview.html",
+                                      {"request": request, "free_berths": free_berths})
+
 
 @app.post("/add")
 def add(request: Request, name: str = Form(...), occupied: bool = Form(False), default_boat_id: int | None = Form(None), db: Session = Depends(get_db)):
@@ -67,27 +84,14 @@ def update_boat_in_harbor(request: Request, boat_id: int = Form(...), new_in_har
 
 @app.post("/update_berth_payment_status")
 def update_boat_in_harbor(payment_status: PaymentStatus, db: Session = Depends(get_db)):
-    
     db.query(models.RentedBerth)\
         .filter(models.RentedBerth.id == payment_status.berth_id)\
         .update({'is_paid': payment_status.new_berth_payment_status})
     db.commit()
 
-# @app.get("/update/{todo_id}")
-# def update(request: Request, todo_id: int, db: Session = Depends(get_db)):
-#     todo = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
-#     todo.complete = not todo.complete
-#     db.commit()
-
-#     url = app.url_path_for("home")
-#     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
-
-
-# @app.get("/delete/{todo_id}")
-# def delete(request: Request, todo_id: int, db: Session = Depends(get_db)):
-#     todo = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
-#     db.delete(todo)
-#     db.commit()
-
-#     url = app.url_path_for("home")
-#     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
+@app.post("/update_berth_return_date")
+def update_boat_in_harbor(return_date: ReturnDate, db: Session = Depends(get_db)):
+    db.query(models.FreeBerth)\
+        .filter(models.FreeBerth.id == return_date.berth_id)\
+        .update({'return_date': return_date.return_date})
+    db.commit()
