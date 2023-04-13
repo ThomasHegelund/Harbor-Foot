@@ -1,27 +1,3 @@
-/* ********************************************************************** 
- * Four Digit Hex Counter
- *   Uses: one 74HC595 shift register
- *         one four digit seven segment display - common cathode (5641AS)
- *         four PN2222 transistors
- *   
- * Inspired by Elegoo Lesson 28 
- *   www.elegoo.com     2016.12.12
- *   modified by Ricardo Moreno
- *
- * Description:
- *   This sketch illustrates controlling a four digit 7-segment 
- *   display with a single 74HC595 shift register. Elegoo kit only
- *   has one 74HC595, so the Arduino will control 7-segment pins D1-D4. 
- *   
- *  History:
- *  6/06/2019 v1.0 - Initial release
- *  
- *  Verify circuit connections:
- *           74HC595 pin     Q7,Q6,Q5,Q4,Q3,Q2,Q1,Q0 
- *           Mapping to       g, c,DP, d, e, b, f, a (7-Segment LED)
- *           for array purposes D4 = digit0, etc.
- ********************************************************************* */
-
 /* ***************************************************
  *                Global Constants                   *
  *************************************************** */
@@ -50,13 +26,7 @@ byte table[]=
         0x45,  // = 7
         0xDF,  // = 8
         0xC7,  // = 9
-        0xCF,  // = A
-        0xDA,  // = b
-        0x1B,  // = C
-        0xDC,  // = d
-        0x9B,  // = E
-        0x8B,  // = F
-        0x00   // blank
+        0x20,  // = decimal point
     };  //Hex shown
 byte digitDP = 32;  // 0x20 - adds this to digit to show decimal point
 byte controlDigits[] = { digit0, digit1, digit2, digit3 };  // pins to turn off & on digits
@@ -81,9 +51,8 @@ unsigned int counter = 0;             // RawDisplay counter
  *           Global Adjustable Variables             *
  *************************************************** */
 int digitDelay = 50;                  // delay between incrementing digits (ms)
-int brightness = 90;                  // valid range of 0-100, 100=brightest
+int brightness = 100;                  // valid range of 0-100, 100=brightest
 unsigned int ShowSegCount = 250;      // number of RawDisplay loops before switching again 
-//bool commonCathode = true;
 
 /* ***************************************************
  *                   Void Setup                      *
@@ -120,13 +89,9 @@ void DisplaySegments(){
             digitalWrite(controlDigits[j],LOW);    // turn off digits
         }
         digitalWrite(latchPin,LOW);
-        if (bitRead(displayDigits[4],x)==1){
-            // raw byte value is sent to shift register
-            shiftOut(dataPin,clockPin,MSBFIRST,displayDigits[x]);
-        } else {
-            // table array value is sent to the shift register
-            shiftOut(dataPin,clockPin,MSBFIRST,table[displayDigits[x]]);
-        }
+        // table array value is sent to the shift register
+        shiftOut(dataPin,clockPin,MSBFIRST,table[displayDigits[x]]);
+        
         
         digitalWrite(latchPin,HIGH);
         digitalWrite(controlDigits[x],HIGH);   // turn on one digit
@@ -137,68 +102,11 @@ void DisplaySegments(){
     }
 }
 
-void HexCounter(){
-    /* Increments values stored in displayDigits array to
-     * creates a Hex counter from the table array.
-     * Uses mixed display types:
-     *    Digit3 | Digit2 | Digit1 | Digit0 
-     *    ---------------------------------
-     *       C   |   0    |   0    |    0
-     */
-    byte Letter = B00011011;  // C
-     
-    //increment values for digits 0-2
-    bool incrementValue = true;
-    for (int d = 0; d < 3; d++){
-        int x = int(displayDigits[d]);
-        if (incrementValue == true) {
-            x++;
-            incrementValue = false;
-            if (x > 15) {
-                displayDigits[d] = 0;
-                incrementValue = true;
-            } else {
-                displayDigits[d] = byte(x);
-            }
-        }
-    }
-    // Set digit3 value
-    displayDigits[3] = Letter;
-    // Set digitSwitch option
-    displayDigits[4] = B1000;
-    
-    if ((displayDigits[0] == 0)&&(displayDigits[1] == 0)&&(displayDigits[2] == 0)){
-        switchView = !switchView;
-        for(int x = 0; x < 5; x++){ displayDigits[x]=0; }        // Reset array
-        displayDigits[4] = B0000;
-    }
-}
-
-void RawDisplay(){
-    // HALO
-    displayDigits[0] = B01011111;  // 0
-    displayDigits[1] = B00011010;  // L
-    displayDigits[2] = B11001111;  // A
-    displayDigits[3] = B11001110;  // H
-     // Set digitSwitch option
-    displayDigits[4] = B1111;
-    
-    if (counter < ShowSegCount){ 
-        counter++;
-    } else {
-        // Reset everything
-        counter = 0;
-        switchView = !switchView;
-        for(int x =0; x<5; x++){ displayDigits[x]=0; }        // Reset array
-        displayDigits[4] = B0000;
-    }
-}
-
 void DateTest(){
-  displayDigits[3] = B01011111;
-  displayDigits[2] = B11011111;
-  displayDigits[1] = B01011111;
-  displayDigits[0] = B11000110;
+  displayDigits[3] = table[0];
+  displayDigits[2] = table[7] + B00100000;
+  displayDigits[1] = table[0];
+  displayDigits[0] = table[8]; 
   displayDigits[4] = B1111;
 }
 
