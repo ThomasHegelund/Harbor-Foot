@@ -93,10 +93,16 @@ def berth_info(request: Request, berth_uuid: uuid.UUID = None,  db: Session = De
     return templates.TemplateResponse("berth_info/index.html",
                                     {"request": request, "berth": berth, "minimum_return_date": minimum_return_date})
 
+@app.get("/return_date/{berth_uuid}")
+def return_date(berth_uuid: uuid.UUID, db: Session = Depends(get_db)):
+    berth = db.query(models.FreeBerth)\
+        .filter(models.FreeBerth.uuid == berth_uuid)\
+        .first()
+    return berth.return_date
 
 @app.post("/add_berth")
-def add_berth(request: Request, name: str = Form(...), occupied: bool = Form(False), default_boat_id: int | None = Form(None), db: Session = Depends(get_db)):
-    new_berth = models.Berth(name = name, occupied = occupied, default_boat_id = default_boat_id)
+def add_berth(request: Request, name: str = Form(...), occupied: bool = Form(False), default_boat_uuid: uuid.UUID | None = Form(None), db: Session = Depends(get_db)):
+    new_berth = models.Berth(name = name, occupied = occupied, default_boat_id = default_boat_uuid)
     db.add(new_berth)
     db.commit()
 
@@ -116,7 +122,9 @@ def add_captain(request: Request, captain_json: CaptainJson, db: Session = Depen
     db.commit()
 
 @app.post("/update_berth_occupation_status")
-def update_berth_occupation_status(request: Request, berth_uuid: int = Form(...), new_occupation_status: bool = Form(...), db: Session = Depends(get_db)):
+def update_berth_occupation_status(request: Request, berth_uuid: uuid.UUID = Form(...), new_occupation_status: bool = Form(...), db: Session = Depends(get_db)):
+    print(berth_uuid)
+    print("#"*20)
     db.query(models.Berth)\
         .filter(models.Berth.uuid == berth_uuid)\
         .update({'occupied': new_occupation_status})
