@@ -98,7 +98,10 @@ def return_date(berth_uuid: uuid.UUID, db: Session = Depends(get_db)):
     berth = db.query(models.FreeBerth)\
         .filter(models.FreeBerth.uuid == berth_uuid)\
         .first()
-    return berth.return_date
+    return format_date(berth.return_date)
+
+def format_date(date: str):
+    return "".join(date.split('-')[1:])
 
 @app.post("/add_berth")
 def add_berth(request: Request, name: str = Form(...), occupied: bool = Form(False), default_boat_uuid: uuid.UUID | None = Form(None), db: Session = Depends(get_db)):
