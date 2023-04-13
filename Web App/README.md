@@ -10,5 +10,5 @@ pip install -r env.txt
 
 # Running the web server
 ```
-uvicorn app:app --reload
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
