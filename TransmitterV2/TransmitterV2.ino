@@ -6,7 +6,7 @@
 */
 
 #include <RCSwitch.h>
-int MY_ID = 69;
+
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
@@ -28,7 +28,13 @@ void setup() {
 }
 
 void loop() {
-/* Same switch as above, but using decimal code */
-  mySwitch.send(MY_ID, 24);
-  delay(100);
+
+  /* See Example: TypeA_WithDIPSwitches *
+
+  /* Same switch as above, but using decimal code */
+  mySwitch.send(5393, 24);
+  delay(100);  
+  Serial.println("SENT");
+  mySwitch.send(5396, 24);
+  delay(100);  
 }
