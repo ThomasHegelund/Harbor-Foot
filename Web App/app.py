@@ -58,6 +58,10 @@ class BoatInHarbor(BaseModel):
     boat_uuid: uuid.UUID
     in_harbor: bool
 
+class OccupationStatusJson(BaseModel):
+    berth_uuid: uuid.UUID
+    new_occupation_status: bool
+
 def convert_json_class_object_to_dict(json_class_object):
     return dict([*json_class_object])
 
@@ -125,12 +129,10 @@ def add_captain(request: Request, captain_json: CaptainJson, db: Session = Depen
     db.commit()
 
 @app.post("/update_berth_occupation_status")
-def update_berth_occupation_status(request: Request, berth_uuid: uuid.UUID = Form(...), new_occupation_status: bool = Form(...), db: Session = Depends(get_db)):
-    print(berth_uuid)
-    print("#"*20)
+def update_berth_occupation_status(request: Request, occupation_status_json: OccupationStatusJson, db: Session = Depends(get_db)):
     db.query(models.Berth)\
-        .filter(models.Berth.uuid == berth_uuid)\
-        .update({'occupied': new_occupation_status})
+        .filter(models.Berth.uuid == occupation_status_json.berth_uuid)\
+        .update({'occupied': occupation_status_json.new_occupation_status})
     db.commit()
 
 @app.post("/update_boat_in_harbor")
