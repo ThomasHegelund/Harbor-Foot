@@ -347,8 +347,6 @@ def calculate_return_code(return_date_information: ReturnCodeInformation, db: Se
     
     if return_date_information.return_date is not None:
         return '01' + format_date(return_date_information.return_date)
-    
-
 
     return '100000'
 

@@ -7,8 +7,8 @@ RCSwitch mySwitch = RCSwitch();
 
 //The boat corresponding to the harbort slot
 String MY_BOAT = "2c6205db-06f1-4277-9432-d512583a2b2a";
-const char* ssid = "Gringo_Factor_Maximized";
-const char* password = "soy gringo";
+const char* ssid = "LyckBryllePetersen";
+const char* password = "Nykredit";
 
 //Your Domain name with URL path or IP address with path
 String serverName = "http://192.168.43.182:8000/update_berth_occupation_status";
@@ -79,7 +79,7 @@ void loop() {
   String code = "{\"berth_uuid\": \"2c6205db-06f1-4277-9432-d512583a2b2a\",\"new_occupation_status\": true}";
   
   //sendCode(code);
-  
+  int received = mySwitch.getReceivedValue();
   if (mySwitch.available()){
     int received = mySwitch.getReceivedValue();
     Serial.println(received);
