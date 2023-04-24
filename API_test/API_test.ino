@@ -12,9 +12,10 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
-
-const char* ssid = "Gringo_Factor_Maximized";
-const char* password = "soy gringo";
+const char* ssid = "Lucas-iPhone";
+const char* password = "dogsandreas";
+//const char* ssid = "Gringo_Factor_Maximized";
+//const char* password = "soy gringo";
 
 //Your Domain name with URL path or IP address with path
 String serverName = "http://192.168.43.182:8000/return_date/2c6205db-06f1-4277-9432-d512583a2b2a";

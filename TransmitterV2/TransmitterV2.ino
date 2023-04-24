@@ -2,7 +2,6 @@
 
 int MY_ID = 3;
 
-
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
@@ -16,11 +15,12 @@ void setup() {
   mySwitch.setPulseLength(200);
   
   // Optional set number of transmission repetitions.
-  // mySwitch.setRepeatTransmit(15);
+  mySwitch.setRepeatTransmit(15);
   
 }
 
 void loop() {
-  mySwitch.send(MY_ID, 24);
-  delay(1000);  
+  mySwitch.send(MY_ID, 12);
+  Serial.println("Sent");
+  delay(100);  
 }

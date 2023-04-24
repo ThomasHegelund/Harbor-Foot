@@ -24,7 +24,7 @@ class Boat(Base):
     __tablename__ = "boats"
 
     uuid = Column(GUID, default=GUID_DEFAULT_SQLITE, primary_key=True, index=True)
-    berth_uuid = Column(GUID)
+    berth_uuid = Column(GUID) 
     captain_uuid = Column(GUID)
     in_harbor = Column(Boolean, default=True)
 
