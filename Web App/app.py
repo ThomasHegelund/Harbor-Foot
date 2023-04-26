@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import FastAPI, Depends, Request, Form, status
+from fastapi.staticfiles import StaticFiles
 from datetime import date
 
 from starlette.responses import RedirectResponse
@@ -24,6 +25,8 @@ models.Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates(directory="templates")
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 # Dependency
@@ -167,8 +170,16 @@ def overview(request: Request, db: Session = Depends(get_db)):
         .all()
     free_berths.sort(key=lambda x: x.return_date, reverse=True)
 
+    DEMO_BERTH_UUID = uuid.UUID('53fe7f71-2f4b-4b6d-970b-465944c516a0')
+    print(list(map(lambda x: x.uuid, free_berths)))
+    if DEMO_BERTH_UUID in list(map(lambda x: x.uuid, free_berths)):
+        grid_image_path = '/b1.png'
+
+    else:
+        grid_image_path = '/b2.jpg'
+
     return templates.TemplateResponse("overview/index.html",
-                                      {"request": request, "free_berths": free_berths})
+                                      {"request": request, "free_berths": free_berths, 'grid_image_path': grid_image_path})
 
 @app.get("/berth_info/{berth_uuid}")
 def berth_info(request: Request, berth_uuid: uuid.UUID = None,  db: Session = Depends(get_db)):
