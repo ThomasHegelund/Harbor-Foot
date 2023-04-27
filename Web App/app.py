@@ -176,7 +176,7 @@ def overview(request: Request, db: Session = Depends(get_db)):
         grid_image_path = '/b1.png'
 
     else:
-        grid_image_path = '/b2.jpg'
+        grid_image_path = '/b2.png'
 
     return templates.TemplateResponse("overview/index.html",
                                       {"request": request, "free_berths": free_berths, 'grid_image_path': grid_image_path})

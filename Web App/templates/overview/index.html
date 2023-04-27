@@ -46,14 +46,14 @@
             {
                 button.querySelector('.material-symbols-outlined').innerHTML = "grid_view";
                 grid.style.display = 'block';
-                table.display = 'none';
+                table.style.display = 'none';
                 state = 'grid';
 
             } else if (state == 'grid')
             {
                 button.querySelector('.material-symbols-outlined').innerHTML = "list";
                 grid.style.display = 'none';
-                table.display = 'table';
+                table.style.display = 'table';
                 state = 'list';
 
             }

@@ -74,3 +74,7 @@ button:hover{
 .berth-table td:nth-child(2){
     text-align: right;
 }
+
+#berth-grid{
+    max-width: 600px;
+}
