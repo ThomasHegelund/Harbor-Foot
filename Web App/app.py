@@ -416,3 +416,6 @@ def send_reminder_to_update_return_date(captain: models.Captain, boat: models.Bo
 
     # Close connection
     s.quit()
+
+def format_date(date: str):
+    return "".join(date.split('-')[1:])
