@@ -76,5 +76,6 @@ button:hover{
 }
 
 #berth-grid{
-    max-width: 600px;
+    max-width: min(600px,90vw);
+    margin: 0 auto;
 }

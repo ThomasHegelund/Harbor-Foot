@@ -5,7 +5,7 @@ from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
 
 from database import Base
 
-
+# Create the relavant models (tables and views) for the database
 class Berth(Base):
     __tablename__ = "berths"
     uuid: Mapped[GUID] = mapped_column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE)
@@ -34,5 +34,3 @@ class Captain(Base):
     uuid = Column(GUID, default=GUID_DEFAULT_SQLITE, primary_key=True, index=True)
     name = Column(String)
     email = Column(String)
-
-# schemas?
