@@ -13,7 +13,7 @@ SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
 
 //RCSwitch class
 RCSwitch mySwitch = RCSwitch();
-
+int MY_BOAT_ID = 3;
 //The UID for the boat who owns the berth space
 String MY_BERTH = "53fe7f71-2f4b-4b6d-970b-465944c516a0";
 
@@ -27,18 +27,8 @@ String main_boat_in_harbor;
 String code;
 
 String SPOT_OCCUPIED;
-//1 er LED state
-//0 - grøn
-//1 - rød
 
-//2 - blink
-
-//2 er display state
-//0 - display er tænd
-//1 - display er slukket
-
-//Sidste 4 er dato
-
+// Sampling interval
 const int measure_interval = 5000;
 unsigned long last_measure_time = millis() - measure_interval;
 
@@ -63,7 +53,7 @@ void sendCode(String package){
   if(WiFi.status() == WL_CONNECTED){
     WiFiClient client;
     HTTPClient http;
-    //Er code en korrekt string
+
     String serverPath = serverName;
     http.begin(client,serverPath.c_str());
     http.addHeader("Content-Type", "application/json");
@@ -71,22 +61,15 @@ void sendCode(String package){
     int httpResponseCode = http.POST(package);
 
     if (httpResponseCode>0) {
-      //Serial.print("HTTP Response code: ");
-      //Serial.println(httpResponseCode);
+
       String payload = http.getString();
+      // Formattign received response.
       String payload2 = payload.substring(1,7);
 
       Serial.println(payload2);
 
     }
-    else {
-      //Serial.print("Error code: ");
-      //Serial.println(httpResponseCode);
-    }
     http.end();
-  }
-  else{
-    //Serial.println("WiFi Disconnected");
   }
 }
 
@@ -99,29 +82,21 @@ void setup() {
 
   //WiFi setup
   WiFi.begin(ssid, password);
-  //Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
   }
-  //Serial.println("");
-  //Serial.print("Connected to WiFi network with IP Address: ");
-  //Serial.println(WiFi.localIP());
 
   //Wireless transmission setup
-  //Data is read on D3
-  mySwitch.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
+  //Data is read on the ESP at D3
+  mySwitch.enableReceive(0); 
 }
 
 void loop() {
-  //Serial.println(mySwitch.getReceivedValue());
   if (is_time_to_make_measurement()){
     if (mySwitch.available()){
       int received = mySwitch.getReceivedValue();
-      //Serial.println("Received from RF");
-      //Serial.println(received);
 
-      if (received == 3){
+      if (received == MY_BOAT_ID){
         main_boat_in_harbor = "true";
       }
       else{
@@ -136,20 +111,10 @@ void loop() {
     int distance = sr04.Distance();
     String occupied = occupation_status(distance, 5, 150);
 
-    //Serial.println("Distance");
-    //Serial.println(distance);
-
-    //Serial.println("Occupied?");
-    //Serial.println(occupied);
-
-    //Serial.println("Home boat?");
-    //Serial.println(main_boat_in_harbor);
-
     last_measure_time = millis();
+    
+    //API-Post package formatting
     code = "{\"berth_uuid\": \"" + MY_BERTH + "\",\"occupied\": " + occupied + ", \"main_boat_in_harbor\": " + main_boat_in_harbor +"}";
-    //code = "{\"berth_uuid\": \"53fe7f71-2f4b-4b6d-970b-465944c516a0\",\"occupied\": true, \"main_boat_in_harbor\": true}";
-    //code = "{\"berth_uuid\": \"53fe7f71-2f4b-4b6d-970b-465944c516a0\",\"occupied\": true, \"main_boat_in_harbor\": true}";
-    //code = "{\"berth_uuid\": \"" + MY_BERTH + "\",\"occupied\": " + occupied + "\",\"main_boat_in_harbor\": " + main_boat_in_harbor + "}";
     sendCode(code);
   }
 }
