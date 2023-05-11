@@ -18,20 +18,10 @@ void setup() {
   // Transmitter is connected to Arduino Pin #10  
   mySwitch.enableTransmit(10);
   
-  // Optional set protocol (default is 1, will work for most outlets)
-  // mySwitch.setProtocol(2);
-
-  // Optional set pulse length.
-  // mySwitch.setPulseLength(320);
-  
-  // Optional set number of transmission repetitions.
-  // mySwitch.setRepeatTransmit(15);
-  
 }
 
 void loop() {
-
-
+  // 24 bits is send
   mySwitch.send(MY_ID, 24);
   Serial.println("Ping")
   delay(1000);  

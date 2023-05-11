@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <title>Free berths</title>
 </head>
 <body>
-    <div>
+    <div style="max-width: 600px; margin: 0 auto;">
         <h1 class="title">Free berths</h1>
-        <p class="description">The berths shown below are unoccupied until the date shown next to it.</p>
+        <p class="description" style="margin-bottom: 5px;">The berths shown below are unoccupied until the date shown next to it.</p>
+        <button id="view-selector"style="margin-bottom: 20px;">
+            <span class="material-symbols-outlined">
+                list
+            </span>
+        </button>
+        
         <table class="berth-table">
             {% for free_berth in free_berths %}
             <tr>
@@ -18,9 +25,39 @@
             </tr>
             {% endfor %}
         </table>
+
+        <img id="berth-grid" src="{{ url_for('static', path=grid_image_path) }}" alt="">
+    </div>
+    <div>
+        
     </div>
     <style>
         {% include "style.css" %}
     </style>
+
+    <script>
+        table = document.querySelector('.berth-table');
+        button = document.querySelector('#view-selector');
+        grid = document.querySelector('#berth-grid');
+        grid.style.display = 'none'
+        state = 'list'
+        button.addEventListener('click', event => {
+            if (state == 'list')
+            {
+                button.querySelector('.material-symbols-outlined').innerHTML = "grid_view";
+                grid.style.display = 'block';
+                table.style.display = 'none';
+                state = 'grid';
+
+            } else if (state == 'grid')
+            {
+                button.querySelector('.material-symbols-outlined').innerHTML = "list";
+                grid.style.display = 'none';
+                table.style.display = 'table';
+                state = 'list';
+
+            }
+        })
+    </script>
 </body>
 </html>
