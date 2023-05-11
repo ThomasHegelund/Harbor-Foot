@@ -4,6 +4,7 @@
 #include <WiFiClient.h>
 #include "SR04.h"
 
+
 // Define super ultrasonic sensor pins
 #define TRIG_PIN 16
 #define ECHO_PIN 5
@@ -17,11 +18,11 @@ RCSwitch mySwitch = RCSwitch();
 String MY_BERTH = "53fe7f71-2f4b-4b6d-970b-465944c516a0";
 
 //WiFi info
-const char* ssid = "LyckBryllePetersen";
-const char* password = "Nykredit";
+const char* ssid = "Gringo_Factor_Maximized";
+const char* password = "soy gringo";
 
 //IP of server host
-String serverName = "http://192.168.8.112:8000/update_berth_status";
+String serverName = "http://192.168.43.182:8000/update_berth_status";
 String main_boat_in_harbor;
 String code;
 
@@ -70,19 +71,22 @@ void sendCode(String package){
     int httpResponseCode = http.POST(package);
 
     if (httpResponseCode>0) {
-      Serial.print("HTTP Response code: ");
-      Serial.println(httpResponseCode);
+      //Serial.print("HTTP Response code: ");
+      //Serial.println(httpResponseCode);
       String payload = http.getString();
-      Serial.println(payload);
+      String payload2 = payload.substring(1,7);
+
+      Serial.println(payload2);
+
     }
     else {
-      Serial.print("Error code: ");
-      Serial.println(httpResponseCode);
+      //Serial.print("Error code: ");
+      //Serial.println(httpResponseCode);
     }
     http.end();
   }
   else{
-    Serial.println("WiFi Disconnected");
+    //Serial.println("WiFi Disconnected");
   }
 }
 
@@ -95,14 +99,14 @@ void setup() {
 
   //WiFi setup
   WiFi.begin(ssid, password);
-  Serial.println("Connecting");
+  //Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    //Serial.print(".");
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
+  //Serial.println("");
+  //Serial.print("Connected to WiFi network with IP Address: ");
+  //Serial.println(WiFi.localIP());
 
   //Wireless transmission setup
   //Data is read on D3
@@ -114,8 +118,8 @@ void loop() {
   if (is_time_to_make_measurement()){
     if (mySwitch.available()){
       int received = mySwitch.getReceivedValue();
-      Serial.println("Received from RF");
-      Serial.println(received);
+      //Serial.println("Received from RF");
+      //Serial.println(received);
 
       if (received == 3){
         main_boat_in_harbor = "true";
@@ -132,14 +136,14 @@ void loop() {
     int distance = sr04.Distance();
     String occupied = occupation_status(distance, 5, 150);
 
-    Serial.println("Distance");
-    Serial.println(distance);
+    //Serial.println("Distance");
+    //Serial.println(distance);
 
-    Serial.println("Occupied?");
-    Serial.println(occupied);
+    //Serial.println("Occupied?");
+    //Serial.println(occupied);
 
-    Serial.println("Home boat?");
-    Serial.println(main_boat_in_harbor);
+    //Serial.println("Home boat?");
+    //Serial.println(main_boat_in_harbor);
 
     last_measure_time = millis();
     code = "{\"berth_uuid\": \"" + MY_BERTH + "\",\"occupied\": " + occupied + ", \"main_boat_in_harbor\": " + main_boat_in_harbor +"}";
