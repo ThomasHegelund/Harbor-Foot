@@ -1,0 +1,81 @@
+:root {
+    --navy-blue: #13141C;
+    --royal-blue: #0074B7;
+    --blue-grotto: #1e3f63;
+    --line-color: #e1e1e3;
+    --baby-blue: #BFD7ED;
+    --orange-button: #f26500;
+    --default-font-size: 5vw;
+  }
+
+html{
+    font-family: sans-serif;
+    color: var(--navy-blue);
+}
+
+body {
+    background-color: white;
+    font-size: min(var(--default-font-size), 30px);
+}
+
+
+body button {
+    background-color: var(--blue-grotto);
+    border: none;
+    padding: 15px;
+    border-radius: min(2vw, 12px);
+    color: white;
+    font-size: min(3.6vw, 21.6px);
+}
+
+button:hover{
+    background:var(--orange-button);
+    cursor: pointer;
+}
+
+.berth-table {
+    border-collapse: collapse;
+    width: min(100%, 600px);
+    margin: 0 auto;
+}
+
+#uncharged-berths button{
+    width: 100%;
+}
+
+.berth-table td{
+    border-top: 1px solid var(--line-color);
+    border-bottom: 1px solid var(--line-color);
+    padding: 15px;
+}
+
+.title{
+    max-width: 600px;
+    margin: 0 auto;
+    text-transform: uppercase;
+    font-size: min(7vw, 50px);
+    margin-top: 40px;
+}
+
+.description {
+    max-width: 600px;
+    margin: 0 auto;
+    margin-bottom: 40px;
+}
+
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.berth-table td:nth-child(2){
+    text-align: right;
+}
+
+#berth-grid{
+    max-width: min(600px,90vw);
+    margin: 0 auto;
+}

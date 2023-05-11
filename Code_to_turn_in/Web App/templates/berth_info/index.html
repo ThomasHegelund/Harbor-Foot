@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berth settings</title>
+</head>
+<body>
+    <div id="berth-info">
+        <h1 class="title">Your Berth</h1>
+        <p class="description">Below information regarding you berth can be seen. You can also update when you assume you will return.</p>
+        <table class="berth-table">
+            <tr>
+                <td>Berth name</td>
+                <td>{{berth.name}}</td>
+            </tr>
+            <tr>
+                <td>Occupation</td>
+                <td style="line-height: 34px;"><span class="dot" style="vertical-align: middle;background-color: {{'red' if berth.occupied is true else 'green'}}"></span></td>
+            </tr>
+            <tr>
+                <td>Return date</td>
+                <td style="line-height: 34px;"><input type="date" min="{{minimum_return_date}}"style="vertical-align: middle;"value="{{berth.return_date}}"></td>
+            </tr>
+        </table>
+    </div>
+    <style>
+        {% include "style.css" %}
+    </style>
+    {% block javascript %}
+    <script type="text/javascript">
+        {% include "berth_info/index.js" %}
+    </script>
+    {% endblock %}
+</body>
+</html>
